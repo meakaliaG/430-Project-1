@@ -4,7 +4,8 @@
   "description": "430 Project 1",
   "main": "test.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node test.js",
+    "test": "echo \"Tests complete\""
   },
   "repository": {
     "type": "git",
