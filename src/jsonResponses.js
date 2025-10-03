@@ -38,7 +38,7 @@ const respond = (request, response, statusCode, statusName, message, isError=fal
         'Content-Type': type === 'json' ? 'application/json' : 'application/xml',
     });
     if (request.method !== 'HEAD') {
-        rewsponse.write(body);
+        response.write(body);
     }
     response.end();
 };
