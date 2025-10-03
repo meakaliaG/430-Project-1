@@ -7,8 +7,60 @@
  
 </head>
 <body>
+  <h1>Book API Demo</h1>
 
-    
-    <script src="bundle.js"> </script>
+  <!-- View books -->
+  <section>
+    <h2>All Books</h2>
+    <button id="loadBooks">Load Books</button>
+    <pre id="booksOutput"></pre>
+  </section>
+
+  <!-- Search books -->
+  <section>
+    <h2>Search Books</h2>
+    <form id="searchForm">
+      <label>Author: <input type="text" name="author"></label>
+      <label>Limit: <input type="number" name="limit"></label>
+      <button type="submit">Search</button>
+    </form>
+    <pre id="searchOutput"></pre>
+  </section>
+
+  <!-- Add book -->
+  <section>
+    <h2>Add a Book</h2>
+    <form id="addForm">
+      <label>Title: <input type="text" name="title" required></label>
+      <label>Author: <input type="text" name="author" required></label>
+      <button type="submit">Add</button>
+    </form>
+    <pre id="addOutput"></pre>
+  </section>
+
+  <!-- Update book -->
+  <section>
+    <h2>Update a Book</h2>
+    <form id="updateForm">
+      <label>ID: <input type="number" name="id" required></label>
+      <label>New Title: <input type="text" name="title"></label>
+      <label>New Author: <input type="text" name="author"></label>
+      <button type="submit">Update</button>
+    </form>
+    <pre id="updateOutput"></pre>
+  </section>
+
+  <!-- Delete book -->
+  <section>
+    <h2>Delete a Book</h2>
+    <form id="deleteForm">
+      <label>ID: <input type="number" name="id" required></label>
+      <button type="submit">Delete</button>
+    </form>
+    <pre id="deleteOutput"></pre>
+  </section>
+
+  <script src="client.js"></script>
+
 </body>
 </html>

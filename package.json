@@ -4,7 +4,7 @@
   "description": "430 Project 1",
   "main": "test.js",
   "scripts": {
-    "start": "node test.js",
+    "start": "node ./src/server.js",
     "test": "echo \"Tests complete\""
   },
   "repository": {

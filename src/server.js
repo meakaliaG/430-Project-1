@@ -1,13 +1,28 @@
 const http = require('http');
+const { parse } = require('url');
 const htmlHandler = require('./htmlResponses.js');
 const jsonHandler = require('./jsonResponses.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const urlStruct = {
-    '/': htmlHandler.getIndex,
-    '/style.css': htmlHandler.getCSS,
-    '/client.js': htmlHandler.getJS,
+    GET: {
+        '/': htmlHandler.getIndex,
+        '/client.html': htmlHandler.getIndex,
+        '/style.css': htmlHandler.getCSS,
+        '/client.js': htmlHandler.getJS,
+        '/books':jsonHandler.getBooks,
+        '/books/search': jsonHandler.getBookSearch,
+    },
+    HEAD: {
+        '/books': (request, response) => {response.writeHead(200); response.end();},
+        '/books/search': (request, response) => {response.writeHead(200); response.end();},
+    },
+    POST: {
+        '/books': jsonHandler.addBook,
+        '/books/:id': jsonHandler.updateBook,
+        '/books/:id/delete': jsonHandler.deleteBook,
+    },
     notFound: jsonHandler.notFound,
 };
 
@@ -16,14 +31,29 @@ const onRequest = (request, response) => {
     // full URL checking for https/http
     const protocol = request.connection.encrypted ? 'https' : 'http';
     const parsedURL = new URL(request.url, `${protocol}://${request.headers.host}`);
+    const {pathname, searchParams} = parsedURL;
   
     // parse query parameters (?key=value) into plain object
-    request.query = Object.fromEntries(parsedURL.searchParams);
+    request.query = Object.fromEntries(searchParams);
   
+    const methodRoutes = urlStruct[request.method];
+
+    if (request.method === 'POST') {
+        if (pathname.match(/^\/books\/\d+$/)) {
+            return jsonHandler.updateBook(request, response);
+        }
+        if (pathname.match(/^\/books\/\d+\/delete$/)) {
+            return jsonHandler.deleteBook(request, response);
+        }
+    }
+
     // check if the path name (the /name part of the url) matches
     // any in url object -> call function || default to index
-    const handler = urlStruct[parsedURL.pathname] || urlStruct.notFound;
-    handler(request, response, request.query);
+    const handler = methodRoutes && methodRoutes[pathname]
+        ? methodRoutes[pathname]
+        : urlStruct.notFound;
+
+    return handler(request, response, request.query);
   };
   
   // start HTTP server
