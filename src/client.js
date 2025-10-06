@@ -21,11 +21,11 @@ document.getElementById('loadBooks').addEventListener('click', async() => {
 });
 
 // Search books
-document.getElementById('searchForm').addEventListener('submit', async() => {
+document.getElementById('searchForm').addEventListener('submit', async(e) => {
     e.preventDefault();
     const params = new URLSearchParams(new FormData(e.target)).toString();
     console.log(params);
-    const data = await request(`/books.search?${params}`);
+    const data = await request(`/books/search?${params}`);
     document.getElementById('searchOutput').textContent = JSON.stringify(data, null, 2);
 });
 
