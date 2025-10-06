@@ -33,7 +33,7 @@ const onRequest = (request, response) => {
     const parsedURL = new URL(request.url, `${protocol}://${request.headers.host}`);
     const {pathname, searchParams} = parsedURL;
 
-    console.log(parsedURL);
+    //console.log(parsedURL);
   
     // parse query parameters (?key=value) into plain object
     request.query = Object.fromEntries(searchParams);
