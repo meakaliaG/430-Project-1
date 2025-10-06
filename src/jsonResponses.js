@@ -128,7 +128,6 @@ const addBook = (request, response) => {
     });
 };
 
-const updateBook = (request, response) => {}
 const notFound = (request, response) => {}
 
 
@@ -140,7 +139,6 @@ module.exports = {
     getBookSearch,
     headBookSearch,
     addBook,
-    updateBook,
     notFound,
 };
 

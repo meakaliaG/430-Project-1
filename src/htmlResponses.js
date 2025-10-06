@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const index = fs.readFileSync(`${__dirname}/../client/client.html`);
+const doc =fs.readFileSync(`${__dirname}/../client/doc.html`);
 const css = fs.readFileSync(`${__dirname}/../client/style.css`);
 const js = fs.readFileSync(`${__dirname}/../src/client.js`);
 
@@ -11,6 +12,15 @@ const getIndex = (request, response) => {
         'Content-Length': Buffer.byteLength(index, 'utf8'),
     });
     response.write(index);
+    response.end();
+};
+
+const getDoc = (request, response) => {
+    response.writeHead(200, {
+        'Content-Type': 'text/html',
+        'Content-Length': Buffer.byteLength(doc, 'utf8'),
+    });
+    response.write(doc);
     response.end();
 };
 
@@ -32,6 +42,7 @@ const getJS = (request, response) => {
 
 module.exports = {
     getIndex,
+    getDoc,
     getCSS,
     getJS,
 };

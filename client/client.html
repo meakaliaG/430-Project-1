@@ -9,6 +9,10 @@
 <body>
   <h1>Book API Demo</h1>
 
+  <nav>
+    <a href="doc.html">API Documentation</a>
+  </nav>
+  
   <!-- View books -->
   <section>
     <h2>All Books</h2>
@@ -52,18 +56,6 @@
       <button type="submit">Add</button>
     </form>
     <pre id="addOutput"></pre>
-  </section>
-
-  <!-- Update book -->
-  <section>
-    <h2>Update a Book</h2>
-    <form id="updateForm">
-      <label>ID: <input type="number" name="id" required></label>
-      <label>New Title: <input type="text" name="title"></label>
-      <label>New Author: <input type="text" name="author"></label>
-      <button type="submit">Update</button>
-    </form>
-    <pre id="updateOutput"></pre>
   </section>
 
   <script src="client.js"></script>

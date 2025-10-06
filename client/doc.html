@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Books API Documentation</title>
+  <style>
+    body {
+      font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      max-width: 900px;
+      margin: 2rem auto;
+      line-height: 1.6;
+      padding: 0 1rem;
+    }
+    h1, h2 {
+      color: #2c3e50;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-bottom: 1.5rem;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.5rem;
+      text-align: left;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    pre {
+      background-color: #f9f9f9;
+      border: 1px solid #ccc;
+      padding: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Books API Documentation</h1>
+
+  <section>
+    <h2>GET /books</h2>
+    <p><strong>Supported Methods:</strong> GET, HEAD</p>
+    <p><strong>Query Parameters:</strong> None</p>
+    <p><strong>Body Parameters:</strong> None</p>
+    <p><strong>Returns:</strong> JSON object containing all books in memory.</p>
+
+    <h3>Example Response:</h3>
+    <pre>
+{
+  "statusName": "success",
+  "message": "Books retrieved successfully.",
+  "books": [
+    {
+      "id": 1,
+      "title": "Things Fall Apart",
+      "author": "Chinua Achebe",
+      "year": 1958,
+      "country": "Nigeria",
+      "language": "English",
+      "link": "https://en.wikipedia.org/wiki/Things_Fall_Apart",
+      "pages": 209,
+      "genres": ["Historical Fiction", "Postcolonial Literature"]
+    }
+  ]
+}
+    </pre>
+  </section>
+
+  <section>
+    <h2>GET /books/search</h2>
+    <p><strong>Supported Methods:</strong> GET, HEAD</p>
+    <h3>Query Parameters:</h3>
+    <table>
+      <tr><th>Param</th><th>Type</th><th>Required</th><th>Description</th></tr>
+      <tr><td>author</td><td>string</td><td>optional</td><td>Filter books by author name (case-insensitive, partial match)</td></tr>
+      <tr><td>title</td><td>string</td><td>optional</td><td>Filter books by title (case-insensitive, partial match)</td></tr>
+      <tr><td>year</td><td>number</td><td>optional</td><td>Filter books by exact publication year</td></tr>
+      <tr><td>genre</td><td>string</td><td>optional</td><td>Filter books by genre (partial or full match)</td></tr>
+      <tr><td>limit</td><td>number</td><td>optional</td><td>Maximum number of results to return</td></tr>
+    </table>
+    <p><strong>Body Parameters:</strong> None</p>
+    <p><strong>Returns:</strong> JSON object containing filtered book results.</p>
+
+    <h3>Example Response:</h3>
+    <pre>
+{
+  "statusName": "success",
+  "message": "Filtered results.",
+  "results": [
+    {
+      "title": "Things Fall Apart",
+      "author": "Chinua Achebe",
+      "year": 1958,
+      "country": "Nigeria",
+      "language": "English",
+      "link": "https://en.wikipedia.org/wiki/Things_Fall_Apart",
+      "pages": 209,
+      "genres": ["Historical Fiction", "Postcolonial Literature"]
+    }
+  ]
+}
+    </pre>
+  </section>
+
+  <section>
+    <h2>POST /books</h2>
+    <p><strong>Supported Methods:</strong> POST</p>
+    <h3>Body Parameters (JSON):</h3>
+    <table>
+      <tr><th>Param</th><th>Type</th><th>Required</th><th>Description</th></tr>
+      <tr><td>title</td><td>string</td><td>required</td><td>Title of the book</td></tr>
+      <tr><td>author</td><td>string</td><td>required</td><td>Author of the book</td></tr>
+      <tr><td>year</td><td>number</td><td>optional</td><td>Publication year</td></tr>
+      <tr><td>genres</td><td>array of strings</td><td>optional</td><td>Book genres</td></tr>
+    </table>
+    <p><strong>Returns:</strong> JSON object containing the newly created book.</p>
+
+    <h3>Example Response:</h3>
+    <pre>
+{
+  "statusName": "created",
+  "message": "Book added successfully.",
+  "book": {
+    "title": "New Book",
+    "author": "Author Name",
+    "year": 2025,
+    "genre": ["genre1", "genre2", ...]
+  }
+}
+    </pre>
+  </section>
+
+  <section>
+    <h2>POST /books/:id</h2>
+    <p><strong>Supported Methods:</strong> POST</p>
+    <p><strong>Body Parameters (JSON):</strong> Any book fields to update (title, author, year, genres, etc.)</p>
+    <p><strong>Returns:</strong> JSON object containing the updated book</p>
+    <p><strong>Errors:</strong> 404 if book not found, 400 if invalid JSON</p>
+  </section>
+
+
+</body>
+</html>

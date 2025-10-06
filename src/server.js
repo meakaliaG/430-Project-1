@@ -9,6 +9,7 @@ const urlStruct = {
     GET: {
         '/': htmlHandler.getIndex,
         '/client.html': htmlHandler.getIndex,
+        '/doc.html': htmlHandler.getDoc ,
         '/style.css': htmlHandler.getCSS,
         '/client.js': htmlHandler.getJS,
         '/books':jsonHandler.getBooks,
@@ -21,8 +22,6 @@ const urlStruct = {
     },
     POST: {
         '/books': jsonHandler.addBook,
-        '/books/:id': jsonHandler.updateBook,
-        '/books/:id/delete': jsonHandler.deleteBook,
     },
     notFound: jsonHandler.notFound,
 };
@@ -41,14 +40,15 @@ const onRequest = (request, response) => {
   
     const methodRoutes = urlStruct[request.method];
 
-    if (request.method === 'POST') {
-        if (pathname.match(/^\/books\/\d+$/)) {
-            return jsonHandler.updateBook(request, response);
-        }
-        if (pathname.match(/^\/books\/\d+\/delete$/)) {
-            return jsonHandler.deleteBook(request, response);
-        }
-    }
+    //POST option TBD
+    // if (request.method === 'POST') {
+    //     if (pathname.match(/^\/books\/\d+$/)) {
+    //         return jsonHandler.updateBook(request, response);
+    //     }
+    //     if (pathname.match(/^\/books\/\d+\/delete$/)) {
+    //         return jsonHandler.deleteBook(request, response);
+    //     }
+    // }
 
     // check if the path name (the /name part of the url) matches
     // any in url object -> call function || default to index
