@@ -19,9 +19,21 @@
   <!-- Search books -->
   <section>
     <h2>Search Books</h2>
-    <form id="searchForm">
+    <label>Limit: <input type="number" name="limit"></label>
+    <form id="authorSearch">
       <label>Author: <input type="text" name="author"></label>
-      <label>Limit: <input type="number" name="limit"></label>
+      <button type="submit">Search</button>
+    </form>
+    <form id="titleSearch">
+      <label>Title: <input type="text" name="title"></label>
+      <button type="submit">Search</button>
+    </form>
+    <form id="yearSearch">
+      <label>Year: <input type="text" name="year"></label>
+      <button type="submit">Search</button>
+    </form>
+    <form id="genreSearch">
+      <label>Genre: <input type="text" name="genre"></label>
       <button type="submit">Search</button>
     </form>
     <pre id="searchOutput"></pre>
@@ -48,16 +60,6 @@
       <button type="submit">Update</button>
     </form>
     <pre id="updateOutput"></pre>
-  </section>
-
-  <!-- Delete book -->
-  <section>
-    <h2>Delete a Book</h2>
-    <form id="deleteForm">
-      <label>ID: <input type="number" name="id" required></label>
-      <button type="submit">Delete</button>
-    </form>
-    <pre id="deleteOutput"></pre>
   </section>
 
   <script src="client.js"></script>

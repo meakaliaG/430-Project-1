@@ -1,11 +1,22 @@
 const fs = require('fs');
-
-//const booksPath = require('../books.json');
-
 const path = require('path');
 const booksPath = path.join(__dirname, '../books.json');
 
 let books = JSON.parse(fs.readFileSync(booksPath, 'utf-8'));
+let allGenres = [];
+
+for (let a=0; a<books.length; a++) {
+    const book = books[a];
+    if (book.genres && Array.isArray(book.genres)) {
+        for (let b=0; b<book.genres.length; b++) {
+            const genre = book.genres[b].trim();
+            if (!allGenres.includes(genre)) {
+                allGenres.push(genre);
+            }
+        }
+    }
+}
+console.log(allGenres);
 
 // HELPER - decide type based on accept header
 const getType = (request) => {
@@ -63,6 +74,15 @@ const getBookSearch = (request, response, query) => {
     if (query.title) {
         results = results.filter((b) => b.title.toLowerCase().includes(query.title.toLowerCase()));
     }
+    if (query.year) {
+        const yearNum = Number(query.year);
+        results = results.filter((b) => b.year === yearNum);
+    }
+    if (query.genre) {
+        const genreQuery = query.genre.toLowerCase();
+        results = results.filter((b) => 
+        b.genres && b.genres.some((g) => g.toLowerCase().includes(genreQuery)));
+    }
     if (query.limit) {
         results = results.slice(0, Number(query.limit));
     }
@@ -106,7 +126,6 @@ const addBook = (request, response) => {
 };
 
 const updateBook = (request, response) => {}
-const deleteBook = (request, response) => {}
 const notFound = (request, response) => {}
 
 
@@ -118,7 +137,6 @@ module.exports = {
     headBookSearch,
     addBook,
     updateBook,
-    deleteBook,
     notFound,
 };
 

@@ -21,7 +21,28 @@ document.getElementById('loadBooks').addEventListener('click', async() => {
 });
 
 // Search books
-document.getElementById('searchForm').addEventListener('submit', async(e) => {
+document.getElementById('authorSearch').addEventListener('submit', async(e) => {
+    e.preventDefault();
+    const params = new URLSearchParams(new FormData(e.target)).toString();
+    console.log(params);
+    const data = await request(`/books/search?${params}`);
+    document.getElementById('searchOutput').textContent = JSON.stringify(data, null, 2);
+});
+document.getElementById('titleSearch').addEventListener('submit', async(e) => {
+    e.preventDefault();
+    const params = new URLSearchParams(new FormData(e.target)).toString();
+    console.log(params);
+    const data = await request(`/books/search?${params}`);
+    document.getElementById('searchOutput').textContent = JSON.stringify(data, null, 2);
+});
+document.getElementById('yearSearch').addEventListener('submit', async(e) => {
+    e.preventDefault();
+    const params = new URLSearchParams(new FormData(e.target)).toString();
+    console.log(params);
+    const data = await request(`/books/search?${params}`);
+    document.getElementById('searchOutput').textContent = JSON.stringify(data, null, 2);
+});
+document.getElementById('genreSearch').addEventListener('submit', async(e) => {
     e.preventDefault();
     const params = new URLSearchParams(new FormData(e.target)).toString();
     console.log(params);
@@ -29,3 +50,4 @@ document.getElementById('searchForm').addEventListener('submit', async(e) => {
     document.getElementById('searchOutput').textContent = JSON.stringify(data, null, 2);
 });
 
+//
