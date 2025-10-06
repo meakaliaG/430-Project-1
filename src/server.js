@@ -13,6 +13,7 @@ const urlStruct = {
         '/client.js': htmlHandler.getJS,
         '/books':jsonHandler.getBooks,
         '/books/search': jsonHandler.getBookSearch,
+        '/genres': jsonHandler.getGenres,
     },
     HEAD: {
         '/books': (request, response) => {response.writeHead(200); response.end();},

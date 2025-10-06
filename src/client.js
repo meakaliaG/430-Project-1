@@ -44,10 +44,29 @@ document.getElementById('yearSearch').addEventListener('submit', async(e) => {
 });
 document.getElementById('genreSearch').addEventListener('submit', async(e) => {
     e.preventDefault();
-    const params = new URLSearchParams(new FormData(e.target)).toString();
+    const genre = document.getElementById('genreSelect').value;
+    const params = new URLSearchParams({genre});
     console.log(params);
     const data = await request(`/books/search?${params}`);
     document.getElementById('searchOutput').textContent = JSON.stringify(data, null, 2);
 });
+async function loadGenres() {
+    try {
+        const response = await fetch('/genres');
+        const data = await response.json();
+
+        const select = document.getElementById('genreSelect');
+        data.genres.forEach((g) => {
+            const option = document.createElement('option');
+            option.value = g;
+            option.textContent = g;
+            select.appendChild(option);
+        });
+    } catch (err) {
+        console.error('Failed to load genres:', err);
+    }
+}
+
+loadGenres();
 
 //

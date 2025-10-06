@@ -16,7 +16,6 @@ for (let a=0; a<books.length; a++) {
         }
     }
 }
-console.log(allGenres);
 
 // HELPER - decide type based on accept header
 const getType = (request) => {
@@ -57,6 +56,10 @@ const respond = (request, response, statusCode, statusName, message, isError=fal
 // GET /books
 const getBooks = (request, response) => {
     return respond(request, response, 200, 'success', 'Books retrieved successfully.', false, {books});
+};
+
+const getGenres = (request, response) => {
+    return respond(request, response, 200, 'success', 'Available genres.', false, {genres:allGenres});
 };
 
 // HEAD /books
@@ -132,6 +135,7 @@ const notFound = (request, response) => {}
 
 module.exports = {
     getBooks,
+    getGenres,
     headBooks,
     getBookSearch,
     headBookSearch,
