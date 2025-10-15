@@ -2,12 +2,13 @@ const http = require('http');
 const { parse } = require('url');
 const htmlHandler = require('./htmlResponses.js');
 const jsonHandler = require('./jsonResponses.js');
+const querystring = require('querystring');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const urlStruct = {
     GET: {
-        '/': htmlHandler.getIndex,
+        '/': htmlHandler.getIndex, 
         '/client.html': htmlHandler.getIndex,
         '/doc.html': htmlHandler.getDoc ,
         '/style.css': htmlHandler.getCSS,
@@ -30,7 +31,7 @@ const urlStruct = {
 
 // handle HTTP requests
 const parseBody = (request) => new Promise((resolve, reject) => {
-    const contentType = request.headers['content-type'];
+    const contentType = request.headers['content-type'] || '';
     let body = '';
 
     request.on('data', (chunk) => {
@@ -42,10 +43,10 @@ const parseBody = (request) => new Promise((resolve, reject) => {
         try {
             if (contentType.includes('application/json')) {
                 return resolve(JSON.parse(body));
-            } else if (contentType.includes('applicaiton/x-www-form-urlencoded')) {
+            } else if (contentType.includes('application/x-www-form-urlencoded')) {
                 return resolve(querystring.parse(body));
             } else {
-                return reject(new Error('Unsupported Content-Type'));
+                return reject(new Error('Unsupported Content-Type: ' + contentType));
             }
         } catch (err) {
             return reject(err);
@@ -66,7 +67,6 @@ const onRequest = async (request, response) => {
     request.query = Object.fromEntries(searchParams);
   
     const methodRoutes = urlStruct[request.method];
-
 
     //POST option TBD
 

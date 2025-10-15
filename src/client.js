@@ -63,6 +63,7 @@ document.getElementById('genreSearch').addEventListener('submit', async(e) => {
     const data = await request(`/books/search?${params}`);
     document.getElementById('searchOutput').textContent = JSON.stringify(data, null, 2);
 });
+
 async function loadGenres() {
     try {
         const response = await fetch('/genres');

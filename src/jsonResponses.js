@@ -6,6 +6,10 @@ let books = JSON.parse(fs.readFileSync(booksPath, 'utf-8'));
 let bookTitles = [];
 let allGenres = [];
 
+const saveBooks = () => {
+    fs.writeFileSync(booksPath, JSON.stringify(books, null, 2));
+};
+
 const refreshMeta = () => {
     bookTitles = [];
     allGenres = [];
@@ -119,79 +123,62 @@ const headBookSearch = (request, response) => {
 };
 
 // POST /books
-const addBook = (request, response) => {
-    let body = '';
-    request.on('data', (chunk) => { body += chunk; });
+const addBook = (request, response, query, body) => {
+    // body is already parsed by server.js!
+    console.log('addBook body:', body);
 
-    request.on('end', () => {
-        try {
-            const data = 
-                request.headers['content-type'] === 'application/json'
-                ? JSON.parse(body)
-                : Object.fromEntries(new URLSearchParams(body));
+    const { title, author, year, genres } = body;
 
-            if (!data.title || !data.author) {
-                return respond(request, response, 400, 'badRequest', 'Missing required fields (titles, author)', true);
-            }
+    if (!title || !author) {
+        return respond(request, response, 400, 'badRequest', 'Missing required fields (title, author)', true);
+    }
 
-            const newBook = {
-                id: books.length + 1,
-                title: data.title,
-                author: data.author,
-                year: data.year ? Number(data.year) : null,
-                genres: data.genres ? data.genres.split(',').map((g) => g.trim()) : [],
-                ratings: [],
-            };
+    const newBook = {
+        id: books.length + 1,
+        title,
+        author,
+        year: year ? Number(year) : null,
+        genres: genres ? genres.split(',').map((g) => g.trim()) : [],
+        ratings: [],
+    };
 
-            books.push(newBook);
-            saveBooks();
-            refreshMeta();
+    books.push(newBook);
+    saveBooks();
+    refreshMeta();
 
-            return respond(request, response, 201, 'created', 'Book added successfully', false, {book:newBook});
-        } catch (e) {
-            return respond(request, response, 400, 'badJSON', 'Invalid JSON', true);
-        }
-    });
+    return respond(request, response, 201, 'created', 'Book added successfully.', false, { book: newBook });
 };
 
-const addRating = (request, response) => {
-    let body = '';
-    request.on('data', (chunk) => { body += chunk; });
-    request.on('end', () => {
-        try {
-            const data = 
-            request.headers['content-type'] === 'application/json'
-            ? JSON.parse(body)
-            : Object.fromEntries(new URLSearchParams(body));
+// POST /books/rating
+const addRating = (request, response, query, body) => {
+    const { rating, bookId, title } = body;
+    const parsedRating = Number(rating);
 
-            const rating = Number(data.rating);
-            if (isNaN(rating) || rating<0 || rating>5) {
-                return respond(request, response, 400, 'badRequest', 'Rating must be a number between 0 and 5.', true);
-            }
+    if (isNaN(parsedRating) || parsedRating < 0 || parsedRating > 5) {
+        return respond(request, response, 400, 'badRequest', 'Rating must be a number between 0 and 5.', true);
+    }
 
-            let book = null;
-            if (data.bookId) {
-                book = books.find((b) => b.id === Number(data.bookId));
-            } else if (data.title) {
-                book = books.find((b) => b.title.toLowerCase() === data.title.toLowerCase());
-            }
+    let book = null;
+    if (bookId) {
+        book = books.find((b) => b.id === Number(bookId));
+    } else if (title) {
+        book = books.find((b) => b.title.toLowerCase() === title.toLowerCase());
+    }
 
-            if (!book) {
-                return respond(request, response, 404, 'notFound', 'Book not found.', true);
-            }
+    if (!book) {
+        return respond(request, response, 404, 'notFound', 'Book not found.', true);
+    }
 
-            book.ratings = book.ratings || [];
-            book.ratings.push(rating);
+    book.ratings = book.ratings || [];
+    book.ratings.push(parsedRating);
 
-            const avgRating = (book.ratings.reduce((a, b) => a + b, 0) / book.ratings.length).toFixed(2);
-            saveBooks();
+    const avgRating = (
+        book.ratings.reduce((a, b) => a + b, 0) / book.ratings.length
+    ).toFixed(2);
 
-            return respond(request, response, 201, 'created', 'Rating added successfully.', false, {
-                book: {...book, averageRating: avgRating},
-            });
-        } catch (e) {
-            return respond(request, response, 400, 'badJSON', 'Invalid JSON.', true);
-        }
+    saveBooks();
+    return respond(request, response, 201, 'created', 'Rating added successfully.', false, {
+        book: { ...book, averageRating: avgRating },
     });
 };
 
