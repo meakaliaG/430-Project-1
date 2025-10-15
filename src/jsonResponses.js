@@ -62,8 +62,9 @@ const respond = (request, response, statusCode, statusName, message, isError=fal
     response.writeHead(statusCode, {
         'Content-Type': type === 'json' ? 'application/json' : 'application/xml',
         'Content-Length': Buffer.byteLength(fullBody), 
-        'X-Status-Name': statusName,
-        'X-Status-Message': message
+        'Status-Name': statusName,
+        'Status-Message': message,
+        'Status-Code': statusCode,
     });
 
     // Write body only for non-HEAD requests and non-204

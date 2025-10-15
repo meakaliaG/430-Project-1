@@ -21,9 +21,11 @@ async function headRequest(endpoint, outputId) {
     });
 
     const contentLength = response.headers.get('Content-Length') || 0;
+    const statusName = response.headers.get('Status-Name');
+    const statusCode = response.headers.get('Status-Code')
 
     document.getElementById(outputId).textContent =
-        `HEAD request returned:\nContent-Length: ${contentLength}`;
+        `HEAD request returned:\nStatus: ${statusCode}, ${statusName}\nContent-Length: ${contentLength}`;
 }
 
 // HEAD bookTitles
