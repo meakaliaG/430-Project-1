@@ -14,37 +14,46 @@ const request = async(url, options = {}) => {
     }
 };
 
+async function headRequest(endpoint, outputId) {
+    const response = await fetch(endpoint, {
+        method: 'HEAD',
+        headers: { 'Accept': 'application/json' }
+    });
+
+    const contentLength = response.headers.get('Content-Length') || 0;
+
+    document.getElementById(outputId).textContent =
+        `HEAD request returned:\nContent-Length: ${contentLength}`;
+}
+
+// HEAD bookTitles
+document.getElementById('headBookTitles').addEventListener('click', () => {
+    headRequest('/bookTitles', 'bookTitlesOutput');
+});
+// HEAD books
+document.getElementById('headBooks').addEventListener('click', () => {
+    headRequest('/books', 'booksOutput');
+});
+// HEAD genres
+document.getElementById('headGenres').addEventListener('click', () => {
+    headRequest('/genres', 'genresOutput');
+});
+
+
 // GET all bookTitles
 document.getElementById('getBookTitles').addEventListener('click', async() => {
     const data = await request('/bookTitles');
     document.getElementById('bookTitlesOutput').textContent = JSON.stringify(data, null, 2);
 });
-// HEAD all bookTitles
-document.getElementById('headBookTitles').addEventListener('click', async() => {
-    const response = await fetch('/bookTitles', {method:'HEAD', headers:{'Accept':'application/json'}});
-    document.getElementById('bookTitlesOutput').textContent = `HEAD requested returned status: ${response.status}`;
-});
-
 // GET all books
 document.getElementById('getBooks').addEventListener('click', async() => {
     const data = await request('/books');
     document.getElementById('booksOutput').textContent = JSON.stringify(data, null, 2);
 });
-// HEAD all books
-document.getElementById('headBooks').addEventListener('click', async() => {
-    const response = await fetch('/books', {method:'HEAD', headers:{'Accept':'application/json'}});
-    document.getElementById('booksOutput').textContent = `HEAD requested returned status: ${response.status}`;
-});
-
 // GET all genres
 document.getElementById('getGenres').addEventListener('click', async() => {
     const data = await request('/genres');
     document.getElementById('genresOutput').textContent = JSON.stringify(data, null, 2);
-});
-// HEAD all genres
-document.getElementById('headGenres').addEventListener('click', async() => {
-    const response = await fetch('/generes', {method:'HEAD', headers:{'Accept':'application/json'}});
-    document.getElementById('genresOutput').textContent = `HEAD requested returned status: ${response.status}`;
 });
 
 // GET book
@@ -134,30 +143,3 @@ document.getElementById('addRatingForm').addEventListener('submit', async (e) =>
     e.target.reset();
 });
 
-
-// POST add rating
-// document.getElementById('addRatingForm').addEventListener('submit', async (e) => {
-//     e.preventDefault();
-//     const formData = new FormData(e.target);
-//     const data = Object.fromEntries(formData.entries());
-//     console.log(data);
-//     const result = await request('/books/rating', {
-//         method: 'POST',
-//         headers: {'Content-Type': 'application/json'},
-//         body: JSON.stringify(data),
-//     });
-//     document.getElementById('addRatingOutput').textContent = JSON.stringify(result, null, 2);
-//     e.target.reset();
-// });
-
-// const ratingSection = document.createElement('section');
-// ratingSection.innerHTML = `
-//     <h2>addRating</h2>
-//     <form id="ratingForm">
-//         <label>Book Title: <input type="text" name="title" required></label>
-//         <label>Rating (1–5): <input type="number" name="rating" min="1" max="5" required></label>
-//         <button type="submit">Submit Rating</button>
-//     </form>
-//     <pre id="ratingOutput"></pre>
-// `;
-// document.body.appendChild(ratingSection);

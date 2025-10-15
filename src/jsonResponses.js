@@ -53,39 +53,51 @@ const buildBody = (statusName, message, type, isError=false, extra ={}) => {
 const respond = (request, response, statusCode, statusName, message, isError=false, extra={}) => {
     const type = getType(request);
     let body = '';
-    if (statusCode !== 204) {
-        body = buildBody(statusName, message, type, isError, extra);
+    const fullBody = buildBody(statusName, message, type, isError, extra);
+   
+    if (statusCode !== 204 && request.method !== 'HEAD') {
+        body = fullBody;
     }
+
     response.writeHead(statusCode, {
         'Content-Type': type === 'json' ? 'application/json' : 'application/xml',
-        'Content-Length': Buffer.byteLength(body),
+        'Content-Length': Buffer.byteLength(fullBody), 
+        'X-Status-Name': statusName,
+        'X-Status-Message': message
     });
+
+    // Write body only for non-HEAD requests and non-204
     if (request.method !== 'HEAD' && statusCode !== 204) {
         response.write(body);
     }
+
     response.end();
 };
 
+
 // GET /bookTitles
 const getBookTitles = (request, response) => {
+    const extraData = {bookTitles};
     if (request.method === 'HEAD') {
-        return respond(request, response, 200, 'success', '', false);
+        return respond(request, response, 200, 'success', '', false, extraData);
     }
     return respond(request, response, 200, 'success', 'Book titles retrieved successfully.', false, {bookTitles});
 };
 
 // GET /books
 const getBooks = (request, response) => {
+    const extraData = {books};
     if (request.method === 'HEAD') {
-        return respond(request, response, 200, 'success', '', false);
+        return respond(request, response, 200, 'success', '', false, extraData);
     }
     return respond(request, response, 200, 'success', 'Books retrieved successfully.', false, {books});
 };
 
 // GET /genres
 const getGenres = (request, response) => {
+    const extraData = {allGenres};
     if (request.method === 'HEAD') {
-        return respond(request, response, 200, 'success', '', false);
+        return respond(request, response, 200, 'success', '', false, extraData);
     }
     return respond(request, response, 200, 'success', 'Available genres.', false, {genres:allGenres});
 };

@@ -1,5 +1,4 @@
 const http = require('http');
-const { parse } = require('url');
 const htmlHandler = require('./htmlResponses.js');
 const jsonHandler = require('./jsonResponses.js');
 const querystring = require('querystring');
@@ -19,8 +18,10 @@ const urlStruct = {
         '/genres': jsonHandler.getGenres,
     },
     HEAD: {
-        '/books': (request, response) => {response.writeHead(200); response.end();},
-        '/books/search': (request, response) => {response.writeHead(200); response.end();},
+        '/bookTitles':jsonHandler.getBookTitles,
+        '/books': jsonHandler.getBooks,
+        '/books/search': jsonHandler.getBookSearch,
+        '/genres': jsonHandler.getGenres,
     },
     POST: {
         '/books': jsonHandler.addBook,
