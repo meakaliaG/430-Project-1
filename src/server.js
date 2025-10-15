@@ -68,8 +68,6 @@ const onRequest = async (request, response) => {
   
     const methodRoutes = urlStruct[request.method];
 
-    //POST option TBD
-
     // check if the path name (the /name part of the url) matches
     // any in url object -> call function || default to index
     const handler = methodRoutes && methodRoutes[pathname]

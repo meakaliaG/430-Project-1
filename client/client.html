@@ -17,6 +17,7 @@
    <section>
     <h2>getBookTitles</h2>
     <button id="getBookTitles">GET</button>
+    <button id="headBookTitles">HEAD</button>
     <pre id="bookTitlesOutput"></pre>
   </section>
   
@@ -24,6 +25,7 @@
   <section>
     <h2>getBooks</h2>
     <button id="getBooks">GET</button>
+    <button id="headBooks">HEAD</button>
     <pre id="booksOutput"></pre>
   </section>
 
@@ -31,6 +33,7 @@
   <section>
     <h2>getGenres</h2>
     <button id="getGenres">GET</button>
+    <button id="headGenres">HEAD</button>
     <pre id="genresOutput"></pre>
   </section>
 
@@ -80,8 +83,8 @@
    <section>
     <h2>addRating</h2>
     <form id="addRatingForm">
-      <label>Book ID: <input type="number" name"bookID"></label>
-      <label>Rating (0-5): <input type="number" name"rating" min="0" max="5" required></label>
+      <label>Title: <input type="text" name="bookTitle"></label>
+      <label>Rating (0-5): <input type="number" name="rating" min="0" max="5" required></label>
       <button type="submit">Submit Rating</button>
     </form>
     <pre id="addRatingOutput"></pre>

@@ -19,17 +19,32 @@ document.getElementById('getBookTitles').addEventListener('click', async() => {
     const data = await request('/bookTitles');
     document.getElementById('bookTitlesOutput').textContent = JSON.stringify(data, null, 2);
 });
+// HEAD all bookTitles
+document.getElementById('headBookTitles').addEventListener('click', async() => {
+    const response = await fetch('/bookTitles', {method:'HEAD', headers:{'Accept':'application/json'}});
+    document.getElementById('bookTitlesOutput').textContent = `HEAD requested returned status: ${response.status}`;
+});
 
 // GET all books
 document.getElementById('getBooks').addEventListener('click', async() => {
     const data = await request('/books');
     document.getElementById('booksOutput').textContent = JSON.stringify(data, null, 2);
 });
+// HEAD all books
+document.getElementById('headBooks').addEventListener('click', async() => {
+    const response = await fetch('/books', {method:'HEAD', headers:{'Accept':'application/json'}});
+    document.getElementById('booksOutput').textContent = `HEAD requested returned status: ${response.status}`;
+});
 
 // GET all genres
 document.getElementById('getGenres').addEventListener('click', async() => {
     const data = await request('/genres');
     document.getElementById('genresOutput').textContent = JSON.stringify(data, null, 2);
+});
+// HEAD all genres
+document.getElementById('headGenres').addEventListener('click', async() => {
+    const response = await fetch('/generes', {method:'HEAD', headers:{'Accept':'application/json'}});
+    document.getElementById('genresOutput').textContent = `HEAD requested returned status: ${response.status}`;
 });
 
 // GET book
@@ -101,7 +116,13 @@ document.getElementById('addRatingForm').addEventListener('submit', async (e) =>
     e.preventDefault();
     const formData = new FormData(e.target);
     const dataObj = Object.fromEntries(formData.entries());
-    console.log(dataObj);
+
+    // Rename the property to match what the server expects
+    dataObj.title = dataObj.bookTitle;
+    delete dataObj.bookTitle;
+
+    // Ensure rating is numeric
+    dataObj.rating = Number(dataObj.rating);
 
     const data = await request('/books/rating', {
         method: 'POST',
@@ -110,9 +131,9 @@ document.getElementById('addRatingForm').addEventListener('submit', async (e) =>
     });
 
     document.getElementById('addRatingOutput').textContent = JSON.stringify(data, null, 2);
-    console.log(data);
     e.target.reset();
 });
+
 
 // POST add rating
 // document.getElementById('addRatingForm').addEventListener('submit', async (e) => {

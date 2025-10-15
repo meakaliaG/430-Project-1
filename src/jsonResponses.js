@@ -27,8 +27,6 @@ const refreshMeta = () => {
 };
 refreshMeta();
 
-
-
 // HELPER - decide type based on accept header
 const getType = (request) => {
     const accept = request.headers.accept || '';
@@ -54,12 +52,15 @@ const buildBody = (statusName, message, type, isError=false, extra ={}) => {
 // HELPER - general response
 const respond = (request, response, statusCode, statusName, message, isError=false, extra={}) => {
     const type = getType(request);
-    const body = buildBody(statusName, message, type, isError, extra);
-
+    let body = '';
+    if (statusCode !== 204) {
+        body = buildBody(statusName, message, type, isError, extra);
+    }
     response.writeHead(statusCode, {
         'Content-Type': type === 'json' ? 'application/json' : 'application/xml',
+        'Content-Length': Buffer.byteLength(body),
     });
-    if (request.method !== 'HEAD') {
+    if (request.method !== 'HEAD' && statusCode !== 204) {
         response.write(body);
     }
     response.end();
@@ -83,12 +84,10 @@ const getBooks = (request, response) => {
 
 // GET /genres
 const getGenres = (request, response) => {
+    if (request.method === 'HEAD') {
+        return respond(request, response, 200, 'success', '', false);
+    }
     return respond(request, response, 200, 'success', 'Available genres.', false, {genres:allGenres});
-};
-
-// HEAD /books
-const headBooks = (request, response) => {
-    return respond(request, response, 200, 'success', '', false);
 };
 
 // GET /books/search
@@ -113,13 +112,10 @@ const getBookSearch = (request, response, query) => {
     if (query.limit) {
         results = results.slice(0, Number(query.limit));
     }
-
+    if (request.method === 'HEAD') {
+        return respond(request, response, 200, 'success', '', false);
+    }
     return respond(request, response, 200, 'success', 'Filtered results.', false, {results});
-};
-
-// HEAD /books/search
-const headBookSearch = (request, response) => {
-    return respond(request, response, 200, 'success', '', false);
 };
 
 // POST /books
@@ -151,27 +147,28 @@ const addBook = (request, response, query, body) => {
 
 // POST /books/rating
 const addRating = (request, response, query, body) => {
-    const { rating, bookId, title } = body;
+    const { rating, title } = body;
+
     const parsedRating = Number(rating);
-
-    if (isNaN(parsedRating) || parsedRating < 0 || parsedRating > 5) {
-        return respond(request, response, 400, 'badRequest', 'Rating must be a number between 0 and 5.', true);
+    if (!rating || isNaN(parsedRating) || parsedRating < 0 || parsedRating > 5) {
+        return respond(
+            request,
+            response,
+            400,
+            'badRequest',
+            'Rating must be a number between 0 and 5.',
+            true
+        );
     }
-
-    let book = null;
-    if (bookId) {
-        book = books.find((b) => b.id === Number(bookId));
-    } else if (title) {
-        book = books.find((b) => b.title.toLowerCase() === title.toLowerCase());
-    }
+    const normalizedTitle = title.trim().toLowerCase();
+    const book = books.find((b) => b.title.trim().toLowerCase() === normalizedTitle);
 
     if (!book) {
         return respond(request, response, 404, 'notFound', 'Book not found.', true);
     }
-
     book.ratings = book.ratings || [];
     book.ratings.push(parsedRating);
-
+    // make ratings array a single value and average
     const avgRating = (
         book.ratings.reduce((a, b) => a + b, 0) / book.ratings.length
     ).toFixed(2);
@@ -180,6 +177,7 @@ const addRating = (request, response, query, body) => {
     return respond(request, response, 201, 'created', 'Rating added successfully.', false, {
         book: { ...book, averageRating: avgRating },
     });
+
 };
 
 const notFound = (request, response) => {
@@ -190,9 +188,7 @@ module.exports = {
     getBookTitles,
     getBooks,
     getGenres,
-    headBooks,
     getBookSearch,
-    headBookSearch,
     addBook,
     addRating,
     notFound,
