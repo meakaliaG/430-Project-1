@@ -16,5 +16,10 @@
   "bugs": {
     "url": "https://github.com/meakaliaG/430-Project-1/issues"
   },
-  "homepage": "https://github.com/meakaliaG/430-Project-1#readme"
+  "homepage": "https://github.com/meakaliaG/430-Project-1#readme",
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.32.0"
+  }
 }

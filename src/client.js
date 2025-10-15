@@ -14,12 +14,25 @@ const request = async(url, options = {}) => {
     }
 };
 
-// Load all books
-document.getElementById('loadBooks').addEventListener('click', async() => {
+// GET all bookTitles
+document.getElementById('getBookTitles').addEventListener('click', async() => {
+    const data = await request('/bookTitles');
+    document.getElementById('bookTitlesOutput').textContent = JSON.stringify(data, null, 2);
+});
+
+// GET all books
+document.getElementById('getBooks').addEventListener('click', async() => {
     const data = await request('/books');
     document.getElementById('booksOutput').textContent = JSON.stringify(data, null, 2);
 });
 
+// GET all genres
+document.getElementById('getGenres').addEventListener('click', async() => {
+    const data = await request('/genres');
+    document.getElementById('genresOutput').textContent = JSON.stringify(data, null, 2);
+});
+
+// GET book
 // Search books
 document.getElementById('authorSearch').addEventListener('submit', async(e) => {
     e.preventDefault();
@@ -66,7 +79,63 @@ async function loadGenres() {
         console.error('Failed to load genres:', err);
     }
 }
-
 loadGenres();
 
-//
+// POST add book
+document.getElementById('addBookForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+    console.log(data);
+    const result = await request('/books', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data),
+    });
+    document.getElementById('addBookOutput').textContent = JSON.stringify(result, null, 2);
+    e.target.reset();
+});
+
+document.getElementById('addRatingForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const dataObj = Object.fromEntries(formData.entries());
+    console.log(dataObj);
+
+    const data = await request('/books/rating', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dataObj),
+    });
+
+    document.getElementById('addRatingOutput').textContent = JSON.stringify(data, null, 2);
+    console.log(data);
+    e.target.reset();
+});
+
+// POST add rating
+// document.getElementById('addRatingForm').addEventListener('submit', async (e) => {
+//     e.preventDefault();
+//     const formData = new FormData(e.target);
+//     const data = Object.fromEntries(formData.entries());
+//     console.log(data);
+//     const result = await request('/books/rating', {
+//         method: 'POST',
+//         headers: {'Content-Type': 'application/json'},
+//         body: JSON.stringify(data),
+//     });
+//     document.getElementById('addRatingOutput').textContent = JSON.stringify(result, null, 2);
+//     e.target.reset();
+// });
+
+// const ratingSection = document.createElement('section');
+// ratingSection.innerHTML = `
+//     <h2>addRating</h2>
+//     <form id="ratingForm">
+//         <label>Book Title: <input type="text" name="title" required></label>
+//         <label>Rating (1–5): <input type="number" name="rating" min="1" max="5" required></label>
+//         <button type="submit">Submit Rating</button>
+//     </form>
+//     <pre id="ratingOutput"></pre>
+// `;
+// document.body.appendChild(ratingSection);

@@ -1,13 +1,13 @@
 html, body {
     height: 100%;
     width: 100%;
-    margin: 0;
+    margin: 25;
     padding: 0;
   }
   
   #top {
     text-align: center;
-    margin: 0 auto;
+    margin: 20;
   }
   
   #top h1 {

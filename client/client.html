@@ -12,17 +12,33 @@
   <nav>
     <a href="doc.html">API Documentation</a>
   </nav>
+
+   <!-- GET /bookTitles -->
+   <section>
+    <h2>getBookTitles</h2>
+    <button id="getBookTitles">GET</button>
+    <pre id="bookTitlesOutput"></pre>
+  </section>
   
-  <!-- View books -->
+  <!-- GET /books -->
   <section>
-    <h2>All Books</h2>
-    <button id="loadBooks">Load Books</button>
+    <h2>getBooks</h2>
+    <button id="getBooks">GET</button>
     <pre id="booksOutput"></pre>
   </section>
 
+  <!-- GET /genres -->
+  <section>
+    <h2>getGenres</h2>
+    <button id="getGenres">GET</button>
+    <pre id="genresOutput"></pre>
+  </section>
+
+  <!-- GET /book -->
   <!-- Search books -->
   <section>
-    <h2>Search Books</h2>
+    <h2>getBook</h2>
+    <h3>Search Books</h3>
     <label>Limit: <input type="number" name="limit"></label>
     <form id="authorSearch">
       <label>Author: <input type="text" name="author"></label>
@@ -47,16 +63,29 @@
     <pre id="searchOutput"></pre>
   </section>
 
-  <!-- Add book -->
+  <!-- POST /books -->
   <section>
-    <h2>Add a Book</h2>
-    <form id="addForm">
+    <h2>addBook</h2>
+    <form id="addBookForm">
       <label>Title: <input type="text" name="title" required></label>
       <label>Author: <input type="text" name="author" required></label>
+      <label>Year: <input type="number" name="year"></label>
+      <label>Genres (comma separated):<input type="text" name="genres"></label>
       <button type="submit">Add</button>
     </form>
-    <pre id="addOutput"></pre>
+    <pre id="addBookOutput"></pre>
   </section>
+
+  <!-- POST /books/rating -->
+   <section>
+    <h2>addRating</h2>
+    <form id="addRatingForm">
+      <label>Book ID: <input type="number" name"bookID"></label>
+      <label>Rating (0-5): <input type="number" name"rating" min="0" max="5" required></label>
+      <button type="submit">Submit Rating</button>
+    </form>
+    <pre id="addRatingOutput"></pre>
+   </section>
 
   <script src="client.js"></script>
 

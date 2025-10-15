@@ -3,19 +3,27 @@ const path = require('path');
 const booksPath = path.join(__dirname, '../books.json');
 
 let books = JSON.parse(fs.readFileSync(booksPath, 'utf-8'));
+let bookTitles = [];
 let allGenres = [];
 
-for (let a=0; a<books.length; a++) {
-    const book = books[a];
-    if (book.genres && Array.isArray(book.genres)) {
-        for (let b=0; b<book.genres.length; b++) {
-            const genre = book.genres[b].trim();
-            if (!allGenres.includes(genre)) {
-                allGenres.push(genre);
+const refreshMeta = () => {
+    bookTitles = [];
+    allGenres = [];
+    for (const book of books) {
+        bookTitles.push(book.title);
+        if (Array.isArray(book.genres)) {
+            for (const genre of book.genres) {
+                const trimmed = genre.trim();
+                if (!allGenres.includes(trimmed)) {
+                    allGenres.push(trimmed);
+                }
             }
         }
     }
-}
+};
+refreshMeta();
+
+
 
 // HELPER - decide type based on accept header
 const getType = (request) => {
@@ -53,11 +61,23 @@ const respond = (request, response, statusCode, statusName, message, isError=fal
     response.end();
 };
 
+// GET /bookTitles
+const getBookTitles = (request, response) => {
+    if (request.method === 'HEAD') {
+        return respond(request, response, 200, 'success', '', false);
+    }
+    return respond(request, response, 200, 'success', 'Book titles retrieved successfully.', false, {bookTitles});
+};
+
 // GET /books
 const getBooks = (request, response) => {
+    if (request.method === 'HEAD') {
+        return respond(request, response, 200, 'success', '', false);
+    }
     return respond(request, response, 200, 'success', 'Books retrieved successfully.', false, {books});
 };
 
+// GET /genres
 const getGenres = (request, response) => {
     return respond(request, response, 200, 'success', 'Available genres.', false, {genres:allGenres});
 };
@@ -105,7 +125,8 @@ const addBook = (request, response) => {
 
     request.on('end', () => {
         try {
-            const data = request.headers['content-type'] === 'application/json'
+            const data = 
+                request.headers['content-type'] === 'application/json'
                 ? JSON.parse(body)
                 : Object.fromEntries(new URLSearchParams(body));
 
@@ -117,10 +138,15 @@ const addBook = (request, response) => {
                 id: books.length + 1,
                 title: data.title,
                 author: data.author,
-                year: data.year || null,
+                year: data.year ? Number(data.year) : null,
+                genres: data.genres ? data.genres.split(',').map((g) => g.trim()) : [],
+                ratings: [],
             };
 
             books.push(newBook);
+            saveBooks();
+            refreshMeta();
+
             return respond(request, response, 201, 'created', 'Book added successfully', false, {book:newBook});
         } catch (e) {
             return respond(request, response, 400, 'badJSON', 'Invalid JSON', true);
@@ -128,17 +154,60 @@ const addBook = (request, response) => {
     });
 };
 
-const notFound = (request, response) => {}
+const addRating = (request, response) => {
+    let body = '';
+    request.on('data', (chunk) => { body += chunk; });
+    request.on('end', () => {
+        try {
+            const data = 
+            request.headers['content-type'] === 'application/json'
+            ? JSON.parse(body)
+            : Object.fromEntries(new URLSearchParams(body));
 
+            const rating = Number(data.rating);
+            if (isNaN(rating) || rating<0 || rating>5) {
+                return respond(request, response, 400, 'badRequest', 'Rating must be a number between 0 and 5.', true);
+            }
 
+            let book = null;
+            if (data.bookId) {
+                book = books.find((b) => b.id === Number(data.bookId));
+            } else if (data.title) {
+                book = books.find((b) => b.title.toLowerCase() === data.title.toLowerCase());
+            }
+
+            if (!book) {
+                return respond(request, response, 404, 'notFound', 'Book not found.', true);
+            }
+
+            book.ratings = book.ratings || [];
+            book.ratings.push(rating);
+
+            const avgRating = (book.ratings.reduce((a, b) => a + b, 0) / book.ratings.length).toFixed(2);
+            saveBooks();
+
+            return respond(request, response, 201, 'created', 'Rating added successfully.', false, {
+                book: {...book, averageRating: avgRating},
+            });
+        } catch (e) {
+            return respond(request, response, 400, 'badJSON', 'Invalid JSON.', true);
+        }
+    });
+};
+
+const notFound = (request, response) => {
+    respond(request, response, 404, 'notFound', 'The requested resource was not found,', true);
+};
 
 module.exports = {
+    getBookTitles,
     getBooks,
     getGenres,
     headBooks,
     getBookSearch,
     headBookSearch,
     addBook,
+    addRating,
     notFound,
 };
 
